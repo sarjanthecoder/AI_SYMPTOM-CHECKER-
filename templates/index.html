@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="/static/hos logo.png" type="image/x-icon"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare+ Health Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #1a1a1a;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background: #f8fafc;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #0066cc;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            color: white !important;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        .nav-cta::after {
+            display: none;
+        }
+
+        /* Hero Section */
+        #landing {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0066cc 0%, #00a8e8 100%);
+            position: relative;
+            overflow: hidden;
+            margin-top: 70px;
+            padding: 2rem;
+        }
+
+        #landing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            animation: fadeInDown 1s ease;
+        }
+
+        #landing h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            animation: fadeInUp 1s ease 0.2s both;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #landing p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .cta-button {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cta-primary {
+            background: white;
+            color: #0066cc;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: white;
+            padding: 4rem 2rem;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Main Sections */
+        #predictor, #doctor-appointments {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1a1a1a;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 3rem;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .panel:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Specific styling for recommendations container */
+        .recommendation-container {
+            max-height: 580px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recommendation-container h2 {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #recommendations-content {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 400px;
+            padding-right: 10px;
+            line-height: 1.8;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        /* Custom scrollbar for recommendations */
+        #recommendations-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #recommendations-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        #recommendations-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            border-radius: 10px;
+        }
+
+        #recommendations-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #0052a3, #0086c7);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .input-group input, 
+        .input-group textarea, 
+        .input-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            color: #1a1a1a;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .input-group input:focus, 
+        .input-group textarea:focus, 
+        .input-group select:focus {
+            outline: none;
+            border-color: #0066cc;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .voice-button {
+            flex: 0 0 50px;
+            height: 50px;
+            border: 2px solid #0066cc;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-button:hover {
+            background: #0066cc;
+        }
+
+        .voice-button:hover svg {
+            fill: white;
+        }
+
+        .voice-button svg {
+            fill: #0066cc;
+            transition: fill 0.3s ease;
+        }
+
+        .voice-button.listening {
+            background: #ef4444;
+            border-color: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        .voice-button.listening svg {
+            fill: white;
+        }
+
+        .language-select {
+            flex: 1;
+        }
+
+        .submit-button, .book-button, .pdf-button {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .submit-button:hover, .book-button:hover, .pdf-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 102, 204, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .submit-button:disabled, .pdf-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pdf-button {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        #recommendations-content h3 {
+            color: #0066cc;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.3rem;
+        }
+
+        #recommendations-content li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        #recommendations-content li::before {
+            content: '•';
+            color: #0066cc;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Doctor Cards */
+        .doctor-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            border-color: #0066cc;
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.15);
+        }
+
+        .doctor-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #0066cc;
+            object-fit: cover;
+        }
+
+        .doctor-info {
+            flex: 1;
+        }
+
+        .doctor-info h3 {
+            margin: 0 0 0.5rem;
+            color: #1a1a1a;
+            font-size: 1.2rem;
+        }
+
+        .doctor-info p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .doctor-info .book-button {
+            margin-top: 1rem;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            color: #00a8e8;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #cbd5e1;
+            line-height: 1.8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #00a8e8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #00a8e8;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .loading-animation {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .loading-animation::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #0066cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            #landing h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .cta-button {
+                width: 100%;
+            }
+
+            .section-heading {
+                font-size: 2rem;
+            }
+
+            .panel {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#landing" class="logo">
+            <div class="logo-icon">⚕</div>
+            <span>MediCare+</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#landing">Home</a></li>
+            <li><a href="#predictor">Health Check</a></li>
+            <li><a href="#footer">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="landing">
+    <div class="hero-content">
+        <div class="hero-badge">🏥 Trusted Healthcare Platform</div>
+        <h1>Your Health,<br>Our Priority</h1>
+        <p>Experience personalized healthcare guidance powered by advanced AI technology. Get instant health advice and connect with qualified doctors near you.</p>
+        <div class="hero-buttons">
+            <button class="cta-button cta-primary" onclick="scrollToSection('predictor')">Check Symptoms</button>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Patients Helped</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">1000+</div>
+            <div class="stat-label">Certified Doctors</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Satisfaction Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Available Support</div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Predictor Section -->
+<section id="predictor">
+    <h2 class="section-heading">AI Health Advisor</h2>
+    <p class="section-subtitle">Describe your symptoms and receive personalized health recommendations instantly</p>
+
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="panel input-container">
+            <h2>Share Your Symptoms</h2>
+
+            <div class="input-group">
+                <label for="symptoms-input">What are you experiencing? 🩺</label>
+                <textarea id="symptoms-input" placeholder="Describe your symptoms in detail..."></textarea>
+
+             
+            </div>
+
+            <div class="input-group">
+                <label for="last-meal-input">Last meal consumed 🍽️</label>
+                <input type="text" id="last-meal-input" placeholder="e.g., Spicy chicken curry">
+            </div>
+
+            <div class="input-group">
+                <label for="duration-input">Duration (days) 📅</label>
+                <input type="number" id="duration-input" placeholder="How many days?">
+            </div>
+
+            <button class="submit-button" onclick="getAdviceAndScroll()">Analyze Symptoms</button>
+            <div class="loading-animation" id="loading"></div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel recommendation-container" id="recommendations-container">
+            <h2>Your Health Report</h2>
+
+            <div id="recommendations-content">
+                Your personalized health advice will appear here after analyzing your symptoms.
+            </div>
+
+            <button class="pdf-button" id="pdf-button" style="display: none;" onclick="saveAsPDF()">
+                Download Report as PDF
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer" id="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>MediCare+</h3>
+            <p>Your trusted partner in healthcare. Providing quality medical guidance and connecting you with the best healthcare professionals.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <a href="#landing">Home</a>
+            <a href="#predictor">Health Check</a>
+        </div>
+        <div class="footer-section">
+            <h3>Services</h3>
+            <a href="#">AI Health Advisor</a>
+        </div>
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p>📍 Tamil Nadu</p>
+            <p>🕐 24/7 Available</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 MediCare+ Health Platform. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+</footer>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    // Firebase Configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAVhSNcoeo0FDK0PG7J6DmyZsWJ3dLahik",
+        authDomain: "health-issue-predictor.firebaseapp.com",
+        projectId: "health-issue-predictor",
+        storageBucket: "health-issue-predictor.firebasestorage.app",
+        messagingSenderId: "84074336229",
+        appId: "1:84074336229:web:a4d0903dc3f91144c4e90c",
+        measurementId: "G-G8CF4P78WL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Smooth Scroll Function
+    function scrollToSection(id) {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Speech Recognition Variables
+    let recognition;
+    let isListening = false;
+    const voiceButton = document.getElementById('voice-button');
+    const languageSelect = document.getElementById('language-select');
+    const symptomsInput = document.getElementById('symptoms-input');
+
+    // Toggle Speech Recognition
+    function toggleSpeechRecognition() {
+        if (isListening) {
+            if (recognition) {
+                recognition.stop();
+            }
+        } else {
+            startSpeechRecognition();
+        }
+    }
+
+    // Start Speech Recognition
+    function startSpeechRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert('❌ Voice input is not supported in this browser. Please try Chrome or Edge.');
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        recognition.lang = languageSelect.value;
+        recognition.interimResults = false;
+        recognition.continuous = false;
+
+        recognition.onstart = () => {
+            isListening = true;
+            voiceButton.classList.add('listening');
+            console.log('🎤 Speech recognition started');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            symptomsInput.value = transcript;
+            console.log('✅ Speech recognized:', transcript);
+        };
+
+        recognition.onerror = (event) => {
+            console.error('❌ Speech recognition error:', event.error);
+            let errorMsg = "Voice input failed. Please try again.";
+            if (event.error === 'no-speech') {
+                errorMsg = "No speech detected. Please speak clearly and try again.";
+            } else if (event.error === 'audio-capture') {
+                errorMsg = "Microphone error. Please check your microphone settings.";
+            } else if (event.error === 'not-allowed') {
+                errorMsg = "Microphone access denied. Please allow microphone access.";
+            }
+            alert(errorMsg);
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            voiceButton.classList.remove('listening');
+            console.log('🛑 Speech recognition ended');
+            recognition = null;
+        };
+
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error("Error starting speech recognition:", e);
+            alert('❌ Could not start voice input. Please try again.');
+            isListening = false;
+            voiceButton.classList.remove('listening');
+        }
+    }
+
+    // Scroll to Recommendations
+    function scrollToRecommendations() {
+        document.getElementById('recommendations-container').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }
+
+    // Get Health Advice and Scroll
+    async function getAdviceAndScroll() {
+        await getAdvice();
+        setTimeout(() => scrollToRecommendations(), 300);
+    }
+
+    // Get Health Advice
+    async function getAdvice() {
+        const lastMealInput = document.getElementById('last-meal-input');
+        const durationInput = document.getElementById('duration-input');
+        const recommendationsContent = document.getElementById('recommendations-content');
+        const loadingAnimation = document.getElementById('loading');
+        const submitButton = document.querySelector('.submit-button');
+        const pdfButton = document.getElementById('pdf-button');
+
+        const symptoms = symptomsInput.value.trim();
+        const last_meal = lastMealInput.value.trim();
+        const duration = durationInput.value.trim();
+
+        if (!symptoms) {
+            recommendationsContent.innerHTML = "<p style='color: #ef4444;'>⚠️ Please enter your symptoms to get advice.</p>";
+            return;
+        }
+
+        loadingAnimation.style.display = 'block';
+        submitButton.disabled = true;
+        submitButton.textContent = 'Analyzing...';
+        recommendationsContent.style.opacity = 0.5;
+        pdfButton.style.display = 'none';
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    symptoms: symptoms, 
+                    last_meal: last_meal, 
+                    duration: duration 
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.error) {
+                recommendationsContent.innerHTML = `<p style="color: #ef4444;">⚠️ Error: ${data.error}</p>`;
+            } else {
+                const formattedAdvice = formatAdviceForPatient(data.advice);
+                recommendationsContent.innerHTML = formattedAdvice;
+                pdfButton.style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            recommendationsContent.innerHTML = `<p style='color: #ef4444;'>⚠️ Failed to get advice: ${error.message}. Please check your connection and try again.</p>`;
+        } finally {
+            loadingAnimation.style.display = 'none';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Analyze Symptoms';
+            recommendationsContent.style.opacity = 1;
+        }
+    }
+
+    // Format Advice for Display
+    function formatAdviceForPatient(adviceText) {
+        let formatted = adviceText
+            .replace(/\*\*(.*?)\*\*/g, '<h3 style="color: #0066cc; margin: 1.5rem 0 1rem; font-size: 1.3rem;">$1</h3>')
+            .replace(/^(\d+\.|-|\*)\s+(.*?)$/gm, '<li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">$2</li>')
+            .replace(/\n\n+/g, '</p><p style="margin: 1rem 0;">')
+            .replace(/\n/g, '<br>');
+
+        if (!formatted.trim().match(/^<(p|h|ul|ol|li)/)) {
+            formatted = '<p style="margin: 0.5rem 0;">' + formatted;
+        }
+        if (!formatted.trim().match(/<\/(p|h|ul|ol|li)>$/)) {
+            formatted += '</p>';
+        }
+        
+        formatted = formatted.replace(/(<li>.*?<\/li>\s*)+/g, (match) => `<ul style="list-style-type: disc; padding-left: 2rem;">${match}</ul>`);
+
+        return formatted;
+    }
+// FIXED PDF GENERATION FUNCTION
+   // FIXED PDF GENERATION FUNCTION
+    async function saveAsPDF() {
+        const { jsPDF } = window.jspdf;
+        const loadingAnimation = document.getElementById('loading');
+        const pdfButton = document.getElementById('pdf-button');
+        const recommendationsContent = document.getElementById('recommendations-content');
+        
+        // Check if content exists
+        if (!recommendationsContent || recommendationsContent.innerText.trim() === '' || 
+            recommendationsContent.innerText === 'Your personalized health advice will appear here after analyzing your symptoms.') {
+            alert('⚠️ No content to download. Please analyze symptoms first.');
+            return;
+        }
+        
+        try {
+            loadingAnimation.style.display = 'block';
+            pdfButton.disabled = true;
+            pdfButton.textContent = 'Generating PDF...';
+            
+            // Create new PDF document
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            const contentWidth = pageWidth - (margin * 2);
+            let yPosition = margin;
+            
+            // Helper function to add text with word wrapping
+            function addText(text, fontSize, isBold = false, color = [0, 0, 0], isListItem = false) {
+                pdf.setFontSize(fontSize);
+                pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+                pdf.setTextColor(color[0], color[1], color[2]);
+                
+                const effectiveWidth = isListItem ? contentWidth - 5 : contentWidth;
+                const xPosition = isListItem ? margin + 5 : margin;
+                const lines = pdf.splitTextToSize(text, effectiveWidth);
+                
+                // Check if we need a new page
+                const lineHeight = fontSize * 0.4;
+                const totalHeight = lines.length * lineHeight;
+                
+                if (yPosition + totalHeight > pageHeight - margin - 20) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                
+                pdf.text(lines, xPosition, yPosition);
+                yPosition += totalHeight + 2;
+            }
+            
+            // Header with blue background
+            pdf.setFillColor(0, 102, 204);
+            pdf.rect(0, 0, pageWidth, 35, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(24);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('MediCare+ Health Report', pageWidth / 2, 20, { align: 'center' });
+            pdf.setFontSize(10);
+            pdf.text(`Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, pageWidth / 2, 28, { align: 'center' });
+            
+            yPosition = 45;
+            
+            // Patient Information Section
+            const symptoms = document.getElementById('symptoms-input').value || 'Not provided';
+            const lastMeal = document.getElementById('last-meal-input').value || 'Not provided';
+            const duration = document.getElementById('duration-input').value || 'Not provided';
+            
+            pdf.setFillColor(248, 250, 252);
+            const infoBoxHeight = 40;
+            pdf.roundedRect(margin, yPosition, contentWidth, infoBoxHeight, 3, 3, 'F');
+            
+            yPosition += 8;
+            addText('Patient Information', 13, true, [0, 102, 204]);
+            addText(`Symptoms: ${symptoms}`, 9, false);
+            addText(`Last Meal: ${lastMeal}`, 9, false);
+            addText(`Duration: ${duration} days`, 9, false);
+            
+            yPosition += 8;
+            
+            // Add Recommendations Content - COMPLETELY FIXED PARSING
+            const content = document.getElementById('recommendations-content');
+            
+            // Get the full text content and parse it properly
+            const fullHTML = content.innerHTML;
+            console.log('Full HTML content:', fullHTML); // Debug log
+            
+            // Create a temporary div to parse the HTML properly
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = fullHTML;
+            
+            // Function to recursively extract all text content with proper formatting
+            function processNode(node) {
+                // Process all child nodes
+                for (let child of node.childNodes) {
+                    if (child.nodeType === Node.ELEMENT_NODE) {
+                        if (child.tagName === 'H3') {
+                            yPosition += 3;
+                            addText(child.textContent.trim(), 12, true, [0, 102, 204]);
+                        } else if (child.tagName === 'UL') {
+                            const items = child.querySelectorAll('li');
+                            items.forEach(item => {
+                                const itemText = item.textContent.trim();
+                                if (itemText) {
+                                    addText(`• ${itemText}`, 9, false, [0, 0, 0], true);
+                                }
+                            });
+                        } else if (child.tagName === 'P') {
+                            const paraText = child.textContent.trim();
+                            if (paraText && paraText.length > 0) {
+                                addText(paraText, 9, false);
+                            }
+                        } else if (child.tagName === 'LI') {
+                            const itemText = child.textContent.trim();
+                            if (itemText) {
+                                addText(`• ${itemText}`, 9, false, [0, 0, 0], true);
+                            }
+                        } else if (child.tagName === 'BR') {
+                            yPosition += 2;
+                        } else {
+                            // Recursively process nested elements
+                            processNode(child);
+                        }
+                    } else if (child.nodeType === Node.TEXT_NODE) {
+                        const text = child.textContent.trim();
+                        if (text && text.length > 0) {
+                            addText(text, 9, false);
+                        }
+                    }
+                }
+            }
+            
+            processNode(tempDiv);
+            
+            // Footer on every page
+            const totalPages = pdf.internal.pages.length - 1;
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                const footerY = pageHeight - 12;
+                pdf.setDrawColor(226, 232, 240);
+                pdf.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+                pdf.setFontSize(8);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text('© 2025 MediCare+ Health Platform. All rights reserved.', pageWidth / 2, footerY, { align: 'center' });
+                pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin, footerY, { align: 'right' });
+            }
+            
+            // Save the PDF
+            pdf.save('MediCare-Health-Report.pdf');
+            
+            console.log('✅ PDF generated successfully');
+            
+        } catch (error) {
+            console.error('❌ PDF generation error:', error);
+            alert('Failed to generate PDF: ' + error.message + '. Please try again.');
+        } finally {
+            loadingAnimation.style.display = 'none';
+            pdfButton.disabled = false;
+            pdfButton.textContent = 'Download Report as PDF';
+        }
+    }
+
+    // Smooth Scroll for Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+</body>
+</html>
