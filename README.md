@@ -6,7 +6,7 @@ AI-powered healthcare web application for symptom analysis and personalized heal
 
 📄 PDF Reports - Download professional health reports
 📱 Responsive Design - Works on all devices
-🔥 Firebase Integration - Real-time data management
+
 
 🚀 Quick Start
 
